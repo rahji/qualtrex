@@ -9,7 +9,6 @@ import (
 	"os"
 
 	"github.com/spf13/pflag"
-	"github.com/yassinebenaid/godump"
 )
 
 var (
@@ -52,13 +51,15 @@ func main() {
 		log.Fatal("expected at least 3 rows in a qualtrics export")
 	}
 
+	numCols := len(rows[0])
+
 	// get metadata for each column and store it in a slice of maps
+	// (ImportID is stored as JSON in one of the fields)
 	var importIDJSON struct {
 		ImportID string `json:"ImportId"`
 	}
-	metadata := make([]map[string]string, len(rows))
+	metadata := make([]map[string]string, numCols)
 	for i := range rows[0] { // i == column slice
-		fmt.Printf("%d: %v\n", i, rows[0])
 		m := make(map[string]string)
 		if err := json.Unmarshal([]byte(rows[2][i]), &importIDJSON); err != nil {
 			log.Fatal("couldn't get qualtrics import id from " + rows[2][i])
@@ -66,11 +67,8 @@ func main() {
 		m["importID"] = importIDJSON.ImportID
 		m["text"] = rows[1][i]
 		m["qualtricsID"] = rows[0][i]
-		metadata = append(metadata, m)
+		metadata[i] = m
 	}
-
-	godump.Dump(metadata)
-	fmt.Printf("%s", metadata[10]["text"])
 
 	// for each row (each to become a separate json file):
 	//   1. loop through each column, adding a new map entry to a map that looks like:
@@ -80,35 +78,28 @@ func main() {
 	//   3. prepend info re: the json file onto the typst document and write the new file to the typst folder
 	// run typst against the json files
 
-	// qualtricsID := rows[0]
-	// text := rows[1]
-	// importID := rows[2]
-
-	// var importIDJSON struct {
-	// 	ImportID string `json:"ImportId"`
-	// }
-	// metadata := make([]map[string]string, len(qualtricsID))
-
-	// loop through each column, to get metadata for that col from the first three rows
-
-	// for row := range rows {
-	// 	// skip the first three rows
-	// 	if row < 3 {
-	// 		continue
-	// 	}
-	// 	// xxx fix according to new structure
-	// 	data := make([]map[string]string, len(metadata))
-	// 	copy(data, metadata)
-	// 	// loop over the copied slice of meta data and complete it with the data from this row
-	// 	for i := range data {
-	// 		data[i]["answer"] = rows[row][i]
-	// 	}
-	// 	jsonBytes, err := json.MarshalIndent(data, "", "  ")
-	// 	if err != nil {
-	// 		log.Fatal(err)
-	// 	}
-	// 	JSONFile := fmt.Sprintf("%03d.json", row-3)
-	// 	writeFile(JSONFile, jsonBytes)
+	for ir, row := range rows {
+		// skip the first three rows
+		if ir < 3 {
+			continue
+		}
+		// make a map of maps that will be this row's json data
+		data := make(map[string]map[string]string, numCols)
+		for ic := range len(row) {
+			importID := metadata[ic]["importID"]
+			m := make(map[string]string)
+			m["text"] = metadata[ic]["text"]
+			m["qualtricsID"] = metadata[ic]["qualtricsID"]
+			m["answer"] = row[ic]
+			data[importID] = m
+		}
+		jsonBytes, err := json.MarshalIndent(data, "", "  ")
+		if err != nil {
+			log.Fatal(err)
+		}
+		JSONFile := fmt.Sprintf("%s/%03d.json", JSONFolder, ir-3)
+		writeFile(JSONFile, jsonBytes)
+	}
 
 	// 	// if TypstFile != "" {
 	// 	// 	// try to make pdf for this json file, using typst
