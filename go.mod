@@ -5,4 +5,5 @@ go 1.25.6
 require (
 	github.com/alecthomas/kong v1.13.0 // indirect
 	github.com/spf13/pflag v1.0.10 // indirect
+	github.com/yassinebenaid/godump v0.11.1 // indirect
 )
