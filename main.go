@@ -175,8 +175,8 @@ func typstFromTemplate(tf, jf string) (string, error) {
 
 // parseFlags parses all of the CLI flags and populates the
 func parseFlags() {
-	pflag.StringVarP(&CSVFile, "csvfile", "i", "", "CSV input file (if not specified, reads from STDIN)")
-	pflag.StringVarP(&TypstFile, "typstfile", "t", "", "Typst document input file (default is not to use typst)")
+	pflag.StringVarP(&CSVFile, "csvfile", "i", "", "CSV input file")
+	pflag.StringVarP(&TypstFile, "typstfile", "t", "", "Typst document input file")
 	pflag.BoolVarP(&help, "help", "h", false, "show help message")
 	pflag.CommandLine.SortFlags = false
 	pflag.Parse()
