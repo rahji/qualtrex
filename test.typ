@@ -1,10 +1,6 @@
-#let data = json("test.json")
+= Survey Result for #q.ipAddress.answer
 
-== #data.QID6.text
+== #q.QID3.text
 
-#data.QID6.answer
-
-== #data.QID8_1.text
-
-#data.QID8_1.answer
+#q.QID3.answer
 
