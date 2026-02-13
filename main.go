@@ -5,7 +5,6 @@ import (
 	"bytes"
 	"encoding/csv"
 	"encoding/json"
-	"errors"
 	"fmt"
 	"log"
 	"os"
@@ -30,17 +29,20 @@ func main() {
 	// make an output folder for json and (maybe) typst and pdf files
 	err = os.MkdirAll(exportFolder, 0755)
 	if err != nil {
-		log.Fatal(err)
+		log.Fatalf("error making export folder: %v", err)
 	}
 
 	// read the csv file into a slice (rows) of slices (cols)
-	reader, err := getCSV(CSVFile)
+	var reader *csv.Reader
+	f, err := os.Open(CSVFile)
 	if err != nil {
-		log.Fatal(err)
+		log.Fatalf("error opening file: %v", err)
 	}
+	defer f.Close()
+	reader = csv.NewReader(f)
 	rows, err := reader.ReadAll()
 	if err != nil {
-		log.Fatal(err)
+		log.Fatalf("error reading rows and cols from the csv file: %v", err)
 	}
 	if len(rows) < 3 {
 		log.Fatal("expected at least 3 rows in a qualtrics export")
@@ -90,7 +92,7 @@ func main() {
 		}
 		jsonBytes, err := json.MarshalIndent(data, "", "  ")
 		if err != nil {
-			log.Fatal(err)
+			log.Fatalf("error marshalling json: %v", err)
 		}
 		JSONFile := fmt.Sprintf("%03d.json", ir-3)
 		writeFile(exportFolder+"/"+JSONFile, jsonBytes)
@@ -99,11 +101,11 @@ func main() {
 		// and use the typst command to compile that new json-referencing typstfile to create a pdf
 		if TypstFile != "" {
 			if _, err := os.Stat(TypstFile); os.IsNotExist(err) {
-				log.Fatal(err)
+				log.Fatalf("typist file doesn't exist: %v", err)
 			}
 			thisTypstFile, err := typstFromTemplate(TypstFile, JSONFile)
 			if err != nil {
-				log.Fatal(err)
+				log.Fatalf("error copying typist template with json data import: %v", err)
 			}
 			cmd := exec.Command("typst", "compile", thisTypstFile)
 			var stderr bytes.Buffer
@@ -121,7 +123,7 @@ func main() {
 func writeFile(fn string, b []byte) {
 	err := os.WriteFile(fn, b, 0644)
 	if err != nil {
-		log.Fatal(err)
+		log.Fatalf("error writing file to %s: %v", fn, err)
 	}
 }
 
@@ -185,26 +187,14 @@ func parseFlags() {
 	}
 }
 
-// getCSV reads from an input filename or from STDIN if the filename is empty
-// returns a CSV reader and an error
+// getCSV reads from an input filename and returns a CSV reader and an error
 func getCSV(infile string) (*csv.Reader, error) {
 	var reader *csv.Reader
-	// if file flag is provided, try to open that file
-	if infile != "" {
-		f, err := os.Open(infile)
-		if err != nil {
-			return nil, fmt.Errorf("error opening file: %v", err)
-		}
-		defer f.Close()
-		reader = csv.NewReader(f)
-	} else {
-		// get the csv data from STDIN
-		stat, _ := os.Stdin.Stat()
-		// unless the STDIN is not piped data
-		if (stat.Mode() & os.ModeCharDevice) != 0 {
-			return nil, errors.New("no input file specified and nothing piped to STDIN")
-		}
-		reader = csv.NewReader(os.Stdin)
+	f, err := os.Open(infile)
+	if err != nil {
+		return nil, fmt.Errorf("error opening file: %v", err)
 	}
+	defer f.Close()
+	reader = csv.NewReader(f)
 	return reader, nil
 }
