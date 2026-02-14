@@ -136,14 +136,12 @@ func typstFromTemplate(tf, jf string) (string, error) {
 	if err != nil {
 		return "", err
 	}
-	defer tempFile.Close()
 
 	// open original file for reading
 	f, err := os.Open(tf)
 	if err != nil {
 		return "", err
 	}
-	defer f.Close()
 
 	// prepend the text
 	str := fmt.Sprintf("#let q = json(\"%s\")\n\n", jf)
@@ -162,6 +160,9 @@ func typstFromTemplate(tf, jf string) (string, error) {
 		return "nil", err
 	}
 	tempFile.Sync() // flush the writes
+
+	tempFile.Close()
+	f.Close()
 
 	newFile := base + ".typ"
 	newFileWithPath := fmt.Sprintf("%s/%s", exportFolder, newFile)
