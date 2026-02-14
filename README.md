@@ -43,8 +43,7 @@ JSON and PDF files.
 
 In the meantime, if you really want to use this, as is, you can clone this repo and build it using Go.
 You will need to also install the [latest version of Typst](https://github.com/typst/typst/releases/latest/download/typst-x86_64-unknown-linux-musl.tar.xz)
-and make sure it's in your path.
+and make sure it's in your path. This has been tested in Linux and Windows (command prompt or WSL). It should probably
+work on MacOS but it doesn't really matter since, again, the idea is to run it from Docker.
 
-I have no idea if this command will work on anything other than Linux and I probably won't try it on
-Windows or Mac since, again, the idea is to run it from Docker.
 
