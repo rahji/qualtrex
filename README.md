@@ -39,10 +39,16 @@ The repo contains two sample Typst example files ([simple.typ](simple.typ) and [
 
 First, install the latest version of the [Typst](https://typst.app) CLI
 
-Then, install QualtrEX by downloading it from the [Releases][releases] tab to your right, then put the binary somewhere in your PATH.
+Then, install QualtrEX by downloading it from the [Releases](releases) tab to your right, then put the binary somewhere in your PATH.
 If you're using Windows and new to the command-line, watch [this video where I explain how to install a command-line program](https://www.youtube.com/watch?v=ZjdqxBTLNTk&t=5s).
 
-If you have Go installed, you can install QualtrEX by running this command instead: `go install github.com/rahji/qualtrex@latest`
+If you have Go installed, you can install QualtrEX by running this command instead: 
 
-If you're using macOS and it works for you, let me know. I've only tested it in Linux and Windows.
+```
+go install github.com/rahji/qualtrex@latest
+```
+
+## Issues
+
+I've only tested QualtrEX in Linux and Windows. If you're using macOS and it works for you, let me know. 
 
