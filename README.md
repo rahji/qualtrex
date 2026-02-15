@@ -37,13 +37,12 @@ The repo contains two sample Typst example files ([simple.typ](simple.typ) and [
 
 ## How to Install It
 
-Don't. The idea is to take this command-line tool and put it in a Docker image, along with the
-[Typst](https://typst.app) CLI. Then you'll just run a single Docker command to turn the CSV into
-JSON and PDF files.
+First, install the latest version of the [Typst](https://typst.app) CLI
 
-In the meantime, if you really want to use this, as is, you can clone this repo and build it using Go.
-You will need to also install the [latest version of Typst](https://github.com/typst/typst/releases/latest/download/typst-x86_64-unknown-linux-musl.tar.xz)
-and make sure it's in your path. This has been tested in Linux and Windows (command prompt or WSL). It should probably
-work on MacOS but it doesn't really matter since, again, the idea is to run it from Docker.
+Then, install QualtrEX by downloading it from the [Releases][releases] tab to your right, then put the binary somewhere in your PATH.
+If you're using Windows and new to the command-line, watch [this video where I explain how to install a command-line program](https://www.youtube.com/watch?v=ZjdqxBTLNTk&t=5s).
 
+If you have Go installed, you can install QualtrEX by running this command instead: `go install github.com/rahji/qualtrex@latest`
+
+If you're using macOS and it works for you, let me know. I've only tested it in Linux and Windows.
 
