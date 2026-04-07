@@ -1,9 +1,9 @@
 # QualtrEX
 
 It's crazy to me that Qualtrics doesn't have an option for exporting a batch of survey results as a PDF.
-Even if you export them one by one, it still contains *all* of the information about that submission
-(including a map of their location, etc.) It doesn't look good and there's no way to customize it. Another
-failing is that there is no way to export the results of a survey as JSON unless you are in their developer
+Even if you export them one by one, the PDF still contains *all* of the information about that submission
+(including a map of their location, etc.) It doesn't look good and there's no way to customize it as far as I know. Another
+issue is that there is no way to export the results of a survey as JSON unless you are in their developer
 program.
 
 This command-line tool allows you to create JSON and PDF files from a CSV file that you've exported from
